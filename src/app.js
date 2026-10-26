@@ -11,14 +11,14 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
-app.get("/health", (req, res) => {
+app.get(["/health", "/api/health"], (req, res) => {
   res.status(200).json({
     status: "ok",
     service: "scrubado-api"
   });
 });
 
-app.get("/health/db", async (req, res) => {
+app.get(["/health/db", "/api/health/db"], async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");
 
