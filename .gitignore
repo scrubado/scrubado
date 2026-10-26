@@ -150,3 +150,18 @@ vite.config.ts.timestamp-*
 
 # Local Netlify folder
 .netlify
+
+# Local editor and operating-system files
+.vscode/
+.idea/
+*.code-workspace
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# Temporary local files
+*.tmp
+*.temp
