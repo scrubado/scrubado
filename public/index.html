@@ -1,40 +1,244 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Scrubado connects Rhode Island homeowners with independent cleaners. No memberships. Simple cleaning requests, transparent quotes, and flexible scheduling.">
   <title>Scrubado | Clean Homes. Brighter Days.</title>
-
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #ffffff;
-    }
-
-    .logo {
-      display: block;
-      width: 90%;
-      max-width: 650px;
-      height: auto;
-    }
+    :root{--ink:#172d35;--muted:#526670;--teal:#077e79;--teal-dark:#04645f;--light:#e9f7f3;--line:#dce7e6;--cream:#fbfcfa;--white:#fff;--shadow:0 16px 55px rgba(14,62,62,.10)}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:#fff;line-height:1.55}
+    a{color:inherit}
+    button,input{font:inherit}
+    button{cursor:pointer}
+    :focus-visible{outline:3px solid #edaf38;outline-offset:4px}
+    .container{width:min(1160px,calc(100% - 40px));margin:auto}
+    .skip{position:absolute;left:-999px;top:12px;background:white;padding:10px;z-index:99}.skip:focus{left:10px}
+    .announcement{background:var(--teal-dark);color:white;text-align:center;padding:8px 16px;font-size:13px;font-weight:650;letter-spacing:.02em}
+    .header{background:white;position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line)}
+    .header-inner{min-height:82px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .brand{display:inline-flex;align-items:center;text-decoration:none;gap:12px;font-weight:850;letter-spacing:-.045em;font-size:27px;white-space:nowrap;color:var(--teal-dark)}
+    .brand-img{width:180px;max-height:64px;object-fit:contain;object-position:left center}
+    .brand-word{display:none}
+    .brand img:not([src]) + .brand-word{display:inline}
+    .nav{display:flex;align-items:center;gap:27px}
+    .nav a{text-decoration:none;font-weight:650;font-size:14px}.nav a:hover{color:var(--teal)}
+    .btn{border-radius:11px;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:13px 23px;font-weight:750;text-decoration:none;border:2px solid transparent;transition:transform .2s,background .2s,box-shadow .2s}
+    .btn:hover{transform:translateY(-2px)}
+    .btn-primary{background:var(--teal);color:white;box-shadow:0 7px 20px rgba(7,126,121,.18)}.btn-primary:hover{background:var(--teal-dark)}
+    .btn-outline{border-color:var(--teal);color:var(--teal-dark);background:#fff}.btn-outline:hover{background:var(--light)}
+    .btn-light{background:white;color:var(--teal-dark)}
+    .hero{background:linear-gradient(115deg,#f0faf5 0%,#fafdff 56%,#edf9f5 100%);overflow:hidden}
+    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:54px;padding:77px 0 92px}
+    .eyebrow{text-transform:uppercase;font-size:12px;color:var(--teal-dark);font-weight:850;letter-spacing:.16em}
+    h1,h2,h3,p{margin-top:0}
+    h1{font-size:clamp(43px,5.5vw,74px);line-height:1.06;letter-spacing:-.065em;margin:17px 0 24px}
+    h1 span{color:var(--teal)}
+    .lead{font-size:19px;line-height:1.7;color:var(--muted);max-width:545px}
+    .hero-buttons{display:flex;flex-wrap:wrap;gap:12px;margin:29px 0 26px}
+    .micro{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+    .micro strong{color:var(--teal-dark)}
+    .art{min-height:470px;border-radius:36px;background:linear-gradient(145deg,#c9efe1,#ecf9ed 56%,#b8dedc);position:relative;box-shadow:var(--shadow);overflow:hidden;display:grid;place-items:center;padding:20px}
+    .art:before,.art:after{content:"";position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.6)}
+    .art:before{width:460px;height:460px;left:-120px;top:-140px}.art:after{width:330px;height:330px;right:-120px;bottom:-170px}
+    .house{width:min(330px,90%);position:relative;z-index:1;filter:drop-shadow(0 15px 20px rgba(2,85,74,.12))}
+    .floating{position:absolute;z-index:3;background:white;padding:12px 16px;border-radius:14px;box-shadow:0 14px 40px rgba(18,76,71,.13);font-weight:750;font-size:13px;display:flex;gap:9px;align-items:center}
+    .floating.one{top:55px;right:22px}.floating.two{left:15px;bottom:65px}.check{background:#d9f4e5;color:#04734e;display:inline-grid;place-items:center;width:29px;height:29px;border-radius:50%;font-weight:900}
+    section{scroll-margin-top:105px}
+    .section{padding:88px 0}
+    .section-head{text-align:center;max-width:670px;margin:0 auto 42px}
+    h2{font-size:clamp(32px,4vw,48px);letter-spacing:-.05em;line-height:1.16;margin:10px 0 15px}
+    .section-head p{color:var(--muted);font-size:17px}
+    .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .feature{padding:32px;border:1px solid var(--line);border-radius:19px;background:white}
+    .feature-icon{width:57px;height:57px;border-radius:16px;display:grid;place-items:center;background:var(--light);font-size:27px;margin-bottom:23px}
+    h3{font-size:20px;letter-spacing:-.03em;margin-bottom:10px}
+    .feature p,.step p{color:var(--muted);margin-bottom:0}
+    .process{background:var(--cream);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .step-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+    .step-num{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--teal);color:#fff;font-weight:850;margin-bottom:16px}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+    .booking-card{padding:43px;border-radius:26px;border:1px solid var(--line);box-shadow:var(--shadow);background:white}
+    .booking-card h2{font-size:36px}
+    .form-label{display:block;font-weight:750;font-size:14px;margin:25px 0 9px}
+    .zip-row{display:flex;gap:10px}.zip-row input{min-width:0;flex:1;border:1.5px solid #bccfce;border-radius:11px;padding:14px 15px;font-size:18px}
+    .feedback{font-size:14px;margin:13px 0 0;min-height:24px;color:var(--muted)}
+    .feedback.success{color:#046747}.feedback.error{color:#a42323}
+    .note{font-size:13px;color:var(--muted)}
+    .list{list-style:none;margin:22px 0 0;padding:0}.list li{margin:13px 0;display:flex;gap:11px;align-items:flex-start}.list li:before{content:"✓";color:var(--teal);font-weight:900}
+    .cleaner-area{background:var(--teal-dark);color:#fff}
+    .cleaner-area p{color:#d6f2ed}
+    .cleaner-panel{padding:36px;border:1px solid rgba(255,255,255,.25);border-radius:23px;background:rgba(255,255,255,.08)}
+    .cleaner-panel h3{font-size:25px}.cleaner-panel ul{margin-bottom:24px;padding-left:20px}.cleaner-panel li{padding:6px 0}
+    .cleaner-area .eyebrow{color:#abf5de}
+    .smallprint{font-size:13px;color:#d6f2ed}
+    .faq-grid{max-width:850px;margin:auto;display:grid;gap:12px}
+    details{border:1px solid var(--line);border-radius:13px;padding:18px 22px;background:white}summary{font-weight:750;cursor:pointer}details p{margin:12px 0 0;color:var(--muted)}
+    footer{padding:40px 0;background:#102d33;color:#deecea}
+    .footer-inner{display:flex;justify-content:space-between;gap:25px;align-items:center;flex-wrap:wrap}
+    .footer-inner a{color:#deecea}.footer-inner small{color:#b8ccca}
+    @media(max-width:900px){.hero-grid,.split{grid-template-columns:1fr}.hero-grid{padding:55px 0}.art{min-height:380px}.feature-grid,.step-grid{grid-template-columns:1fr 1fr}.nav .nav-link{display:none}}
+    @media(max-width:600px){.container{width:min(100% - 32px,1160px)}.header-inner{min-height:69px}.brand-img{width:138px}.nav{gap:9px}.nav .btn{padding:9px 11px;min-height:43px;font-size:12px}.hero-grid{gap:25px;padding:44px 0 62px}h1{font-size:44px}.lead{font-size:17px}.hero-buttons{flex-direction:column}.hero-buttons .btn{width:100%}.art{min-height:290px;border-radius:23px}.floating{font-size:11px;padding:8px}.floating.one{top:20px}.floating.two{bottom:20px}.house{width:230px}.section{padding:65px 0}.feature-grid,.step-grid{grid-template-columns:1fr}.feature{padding:25px}.booking-card{padding:25px}.zip-row{flex-direction:column}.cleaner-panel{padding:24px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}.btn:hover{transform:none}}
   </style>
 </head>
-
 <body>
-  <img
-    src="./images/scrubado-logo.png"
-    alt="Scrubado — Clean Homes. Brighter Days."
-    class="logo"
-  >
+  <a class="skip" href="#main">Skip to main content</a>
+  <div class="announcement">Proudly serving Rhode Island &bull; No cleaning membership required</div>
+  <header class="header">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="Scrubado home">
+        <img class="brand-img" src="./images/scrubado-logo.png" alt="Scrubado" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+        <span class="brand-word">scrubado.</span>
+      </a>
+      <nav class="nav" aria-label="Main navigation">
+        <a class="nav-link" href="#how-it-works">How it works</a>
+        <a class="nav-link" href="#faq">FAQ</a>
+        <a class="btn btn-outline" href="#cleaner">Become a Cleaner</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">A better way to find a clean</span>
+          <h1>Clean homes.<br><span>Brighter days.</span></h1>
+          <p class="lead">Scrubado connects Rhode Island homeowners with independent local cleaners. Request the cleaning you need, see your quote, and get back to living.</p>
+          <div class="hero-buttons">
+            <a class="btn btn-primary" href="#book">Book a Cleaning <span aria-hidden="true">→</span></a>
+            <a class="btn btn-outline" href="#cleaner">Become a Cleaner <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="micro"><strong>✓ No subscription</strong> <span>•</span> <span>✓ Clear booking details</span> <span>•</span> <span>✓ Rhode Island focused</span></div>
+        </div>
+        <div class="art" aria-label="Illustration of a bright and tidy home" role="img">
+          <svg class="house" viewBox="0 0 360 340" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <ellipse cx="180" cy="304" rx="155" ry="21" fill="#93C9B7" fill-opacity=".55"/>
+            <path d="M62 151L180 48L298 151V285C298 293 291 300 283 300H77C69 300 62 293 62 285V151Z" fill="#fff"/>
+            <path d="M42 155L180 36L318 155" stroke="#087E79" stroke-width="25" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M93 169H153V232H93V169Z" fill="#BCE9ED" stroke="#168C92" stroke-width="7"/>
+            <path d="M123 169V232M93 201H153" stroke="#168C92" stroke-width="5"/>
+            <path d="M206 169H266V232H206V169Z" fill="#BCE9ED" stroke="#168C92" stroke-width="7"/>
+            <path d="M236 169V232M206 201H266" stroke="#168C92" stroke-width="5"/>
+            <path d="M159 300V243C159 233 167 225 177 225H190C200 225 208 233 208 243V300" fill="#B5E6C6" stroke="#168C92" stroke-width="7"/>
+            <circle cx="196" cy="267" r="4" fill="#168C92"/>
+            <path d="M296 60L305 81L326 90L305 99L296 120L287 99L266 90L287 81L296 60Z" fill="#F9BF50"/>
+            <path d="M71 28L77 41L90 47L77 53L71 66L65 53L52 47L65 41L71 28Z" fill="#F9BF50"/>
+            <path d="M315 215L320 226L331 231L320 236L315 247L310 236L299 231L310 226L315 215Z" fill="#F9BF50"/>
+            <path d="M76 258C54 228 30 247 33 267C22 285 39 300 59 294L83 300L76 258Z" fill="#51B98A"/>
+            <path d="M70 301V253" stroke="#0C795D" stroke-width="6" stroke-linecap="round"/>
+          </svg>
+          <div class="floating one"><span class="check">✓</span> Your home, your schedule</div>
+          <div class="floating two"><span aria-hidden="true">✨</span> A fresh start feels good</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="benefits">
+      <div class="container">
+        <div class="section-head"><span class="eyebrow">Why Scrubado</span><h2>Clean made simple.</h2><p>Everything you need for a straightforward cleaning experience. None of the membership fine print.</p></div>
+        <div class="feature-grid">
+          <article class="feature"><div class="feature-icon" aria-hidden="true">🏡</div><h3>Built for local homes</h3><p>Focused on connecting Rhode Island households with independent cleaners serving their communities.</p></article>
+          <article class="feature"><div class="feature-icon" aria-hidden="true">💬</div><h3>Know what you're booking</h3><p>Choose your service and add-ons. Review the quoted price before you confirm a booking.</p></article>
+          <article class="feature"><div class="feature-icon" aria-hidden="true">🔁</div><h3>One-time or recurring</h3><p>Schedule once or build a routine. Weekly cleanings receive 12% off; biweekly cleanings receive 8% off.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section process" id="how-it-works">
+      <div class="container">
+        <div class="section-head"><span class="eyebrow">The simple process</span><h2>Three steps to a cleaner home.</h2></div>
+        <div class="step-grid">
+          <article class="step"><div class="step-num">1</div><h3>Tell us what you need</h3><p>Enter your Rhode Island ZIP code, select a service, and choose your preferred date.</p></article>
+          <article class="step"><div class="step-num">2</div><h3>Review your quote</h3><p>See the service details, add-ons, and total price before confirming.</p></article>
+          <article class="step"><div class="step-num">3</div><h3>Get it scrubbed</h3><p>An available independent cleaner accepts your request, and you receive booking updates.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="book">
+      <div class="container split">
+        <div>
+          <span class="eyebrow">For homeowners</span>
+          <h2>Ready for that freshly cleaned feeling?</h2>
+          <p class="lead">Whether it's a one-time reset or regular upkeep, start by checking whether your home is in Scrubado's service area.</p>
+          <ul class="list"><li>No paid membership required</li><li>Residential cleaning, with optional add-ons</li><li>Flexible one-time and recurring requests</li></ul>
+        </div>
+        <div class="booking-card">
+          <h2>Let's get started.</h2>
+          <p>Enter your Rhode Island ZIP code to check coverage.</p>
+          <form id="zip-form" novalidate>
+            <label class="form-label" for="zip">Home ZIP code</label>
+            <div class="zip-row"><input id="zip" name="zip" type="text" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" autocomplete="postal-code" placeholder="e.g. 02860" required aria-describedby="zip-feedback"><button class="btn btn-primary" type="submit">Check ZIP <span aria-hidden="true">→</span></button></div>
+            <p class="feedback" id="zip-feedback" aria-live="polite">Available in Rhode Island, excluding Block Island ZIP 02807.</p>
+          </form>
+          <p class="note">ZIP verification is a preliminary check. Address eligibility and final booking availability are confirmed by the booking system.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cleaner-area" id="cleaner">
+      <div class="container split">
+        <div>
+          <span class="eyebrow">For independent cleaners</span>
+          <h2>More cleaning jobs. On your terms.</h2>
+          <p class="lead">Connect with homeowners looking for reliable cleaning help in Rhode Island. Build a schedule that works for your life.</p>
+          <a class="btn btn-light" href="#cleaner-details">Become a Cleaner <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="cleaner-panel" id="cleaner-details">
+          <h3>Why clean with Scrubado?</h3>
+          <ul><li>Review available jobs without paying to unlock them.</li><li>Choose jobs that fit your availability.</li><li>See job details before accepting.</li><li>Earn the platform's standard 76% cleaner share on base services; qualifying add-ons and drive charges use an 80% share.</li></ul>
+          <p class="smallprint">Cleaner registration and job acceptance will be available when the cleaner app is connected. Cleaner approval and eligibility requirements apply.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-head"><span class="eyebrow">Quick answers</span><h2>Questions? We've got the basics.</h2></div>
+        <div class="faq-grid">
+          <details><summary>Do I need a subscription?</summary><p>No. Scrubado does not require a paid cleaning membership to book a cleaning.</p></details>
+          <details><summary>Where does Scrubado operate?</summary><p>Scrubado's initial service area is Rhode Island, excluding ZIP code 02807 (New Shoreham / Block Island). Availability also depends on cleaners accepting jobs in your area.</p></details>
+          <details><summary>Are the cleaners Scrubado employees?</summary><p>Scrubado is designed as a marketplace that connects customers with independent cleaners.</p></details>
+          <details><summary>How much does a cleaning cost?</summary><p>Pricing depends on the service, details, and selected add-ons. The booking system calculates your quote; we don't advertise made-up flat rates.</p></details>
+          <details><summary>Can I book recurring cleanings?</summary><p>The planned booking options include one-time, weekly (12% off), and biweekly (8% off) cleanings, subject to availability and final quote rules.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="container footer-inner">
+      <div><strong>Scrubado</strong><br><small>Clean Homes. Brighter Days.</small></div>
+      <small>Rhode Island residential cleaning marketplace · &copy; <span id="year">2026</span> Scrubado</small>
+      <a href="#top">Back to top ↑</a>
+    </div>
+  </footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const zipForm = document.getElementById('zip-form');
+    const zipInput = document.getElementById('zip');
+    const zipFeedback = document.getElementById('zip-feedback');
+    zipForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const zip = zipInput.value.trim();
+      zipFeedback.className = 'feedback';
+      if (!/^\d{5}$/.test(zip)) {
+        zipFeedback.textContent = 'Enter a valid 5-digit ZIP code.';
+        zipFeedback.classList.add('error');
+      } else if (zip === '02807') {
+        zipFeedback.textContent = 'Sorry, Block Island (02807) is outside the initial service area.';
+        zipFeedback.classList.add('error');
+      } else if (/^0(?:28|29)\d{2}$/.test(zip)) {
+        zipFeedback.textContent = 'Your ZIP matches our preliminary Rhode Island coverage area! Online booking will open once the customer app is connected.';
+        zipFeedback.classList.add('success');
+      } else {
+        zipFeedback.textContent = 'Scrubado currently serves Rhode Island ZIP codes only.';
+        zipFeedback.classList.add('error');
+      }
+    });
+  </script>
 </body>
 </html>
