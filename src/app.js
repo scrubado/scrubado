@@ -1,10 +1,9 @@
-
-
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const pool = require("./db");
+const quotesRouter = require("./routes/quotes");
 
 const app = express();
 
@@ -40,6 +39,7 @@ app.get(["/health/db", "/api/health/db"], async (req, res) => {
     });
   }
 });
+
 app.get(["/services", "/api/services"], async (req, res) => {
   try {
     const result = await pool.query(`
@@ -62,5 +62,8 @@ app.get(["/services", "/api/services"], async (req, res) => {
     });
   }
 });
+
+// Preliminary server-side quotes; does not create bookings or collect payment.
+app.use(["/quotes", "/api/quotes"], quotesRouter);
 
 module.exports = app;
