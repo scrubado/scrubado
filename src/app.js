@@ -63,23 +63,4 @@ app.get(["/services", "/api/services"], async (req, res) => {
   }
 });
 
-app.get(["/debug/db", "/api/debug/db"], async (req, res) => {
-  try {
-    const result = await pool.query(`
-      SELECT
-        current_database() AS database_name,
-        current_schema() AS schema_name,
-        COUNT(*) AS active_services
-      FROM public.services
-      WHERE is_active = TRUE
-      GROUP BY current_database(), current_schema()
-    `);
-
-    res.json(result.rows[0]);
-  } catch (error) {
-    console.error("Database diagnostic failed:", error);
-    res.status(500).json({ status: "error" });
-  }
-});
-
 module.exports = app;
