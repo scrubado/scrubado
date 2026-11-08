@@ -5,9 +5,10 @@ const pool = require("../db");
 const { quote, PricingError } = require("../services/pricingService");
 const pricingConfig = require("../config/pricing.json");
 
+const { authenticateCustomer } = require("../middleware/authenticate");
 const router = express.Router();
 
-router.post("/", async (req, res) => {
+router.post("/", authenticateCustomer, async (req, res) => {
   try {
     const input = req.body;
     const estimate = quote(input);
@@ -54,8 +55,7 @@ router.post("/", async (req, res) => {
       return res.status(503).json({ error: "Pricing temporarily unavailable" });
     }
 
-    // Customer identity must come from verified authentication later, NOT
-    // from a customer_id posted in the request body. For now it remains NULL.
+    // User ownership is derived from verified JWT authentication.
     const insertResult = await pool.query(
       `INSERT INTO public.quotes (
           customer_id, service_id, service_code, pricing_version,
@@ -64,7 +64,7 @@ router.post("/", async (req, res) => {
           drive_surcharge_applied, pricing_breakdown,
           customer_total_cents, cleaner_total_cents
         ) VALUES (
-          NULL, $1, $2, $3,
+          $13, $1, $2, $3,
           'USD', 'RI', $4, $5, $6,
           $7, $8, $9::jsonb,
           false, $10::jsonb,
@@ -84,6 +84,7 @@ router.post("/", async (req, res) => {
         JSON.stringify(estimate.amounts_cents),
         estimate.amounts_cents.customer_total,
         estimate.amounts_cents.cleaner_total,
+        req.customer.id,
       ]
     );
 

@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const pool = require("./db");
 const quotesRouter = require("./routes/quotes");
 const authRouter = require("./routes/auth");
+const bookingsRouter = require("./routes/bookings");
 
 const app = express();
 
@@ -14,7 +15,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 // Netlify Dev can pass an already-read JSON body as a Buffer instead of
-// an ordinary object. Normalize only authentication requests here.
+// an ordinary object. Normalize auth, quote, and booking requests here.
 function normalizeAuthBody(req, res, next) {
   const contentType = req.get("content-type") || "";
   const isJson = /^application\/(?:[a-z0-9.+-]*\+)?json(?:\s*;|\s*$)/i.test(contentType);
@@ -103,6 +104,7 @@ app.get(["/services", "/api/services"], async (req, res) => {
 });
 
 // Preliminary server-side quotes; does not create bookings or collect payment.
-app.use(["/quotes", "/api/quotes"], quotesRouter);
+app.use(["/quotes", "/api/quotes"], normalizeAuthBody, quotesRouter);
+app.use(["/bookings", "/api/bookings"], normalizeAuthBody, bookingsRouter);
 
 module.exports = app;
