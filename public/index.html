@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#101010">
   <meta name="description" content="Scrubado connects Rhode Island homeowners with independent cleaners. No memberships. Simple cleaning requests, transparent quotes, and flexible scheduling.">
   <title>Scrubado | Clean Homes. Brighter Days.</title>
   <style>
-    :root{--ink:#172d35;--muted:#526670;--teal:#077e79;--teal-dark:#04645f;--light:#e9f7f3;--line:#dce7e6;--cream:#fbfcfa;--white:#fff;--shadow:0 16px 55px rgba(14,62,62,.10)}
+    :root{--ink:#101010;--muted:#59534b;--teal:#c99519;--teal-dark:#936200;--light:#fff5d7;--line:#eadbb7;--cream:#fffaf0;--white:#fff;--shadow:0 16px 55px rgba(65,44,0,.12)}
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
     body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:#fff;line-height:1.55}
@@ -17,21 +17,21 @@
     :focus-visible{outline:3px solid #edaf38;outline-offset:4px}
     .container{width:min(1160px,calc(100% - 40px));margin:auto}
     .skip{position:absolute;left:-999px;top:12px;background:white;padding:10px;z-index:99}.skip:focus{left:10px}
-    .announcement{background:var(--teal-dark);color:white;text-align:center;padding:8px 16px;font-size:13px;font-weight:650;letter-spacing:.02em}
+    .announcement{background:#101010;color:#f5cf64;text-align:center;padding:8px 16px;font-size:13px;font-weight:650;letter-spacing:.02em}
     .header{background:white;position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line)}
     .header-inner{min-height:82px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-    .brand{display:inline-flex;align-items:center;text-decoration:none;gap:12px;font-weight:850;letter-spacing:-.045em;font-size:27px;white-space:nowrap;color:var(--teal-dark)}
-    .brand-img{width:180px;max-height:64px;object-fit:contain;object-position:left center}
+    .brand{display:inline-flex;align-items:center;text-decoration:none;gap:12px;font-weight:850;letter-spacing:-.045em;font-size:27px;white-space:nowrap;color:var(--ink)}
+    .brand-img{width:210px;max-height:70px;object-fit:contain;object-position:left center}
     .brand-word{display:none}
     .brand img:not([src]) + .brand-word{display:inline}
     .nav{display:flex;align-items:center;gap:27px}
     .nav a{text-decoration:none;font-weight:650;font-size:14px}.nav a:hover{color:var(--teal)}
     .btn{border-radius:11px;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:13px 23px;font-weight:750;text-decoration:none;border:2px solid transparent;transition:transform .2s,background .2s,box-shadow .2s}
     .btn:hover{transform:translateY(-2px)}
-    .btn-primary{background:var(--teal);color:white;box-shadow:0 7px 20px rgba(7,126,121,.18)}.btn-primary:hover{background:var(--teal-dark)}
-    .btn-outline{border-color:var(--teal);color:var(--teal-dark);background:#fff}.btn-outline:hover{background:var(--light)}
-    .btn-light{background:white;color:var(--teal-dark)}
-    .hero{background:linear-gradient(115deg,#f0faf5 0%,#fafdff 56%,#edf9f5 100%);overflow:hidden}
+    .btn-primary{background:linear-gradient(120deg,#f7d15a,#c99519);color:#111; box-shadow:0 7px 20px rgba(201,149,25,.25)}.btn-primary:hover{background:#e9b72c}
+    .btn-outline{border-color:#bb8812;color:#171717;background:#fff}.btn-outline:hover{background:var(--light)}
+    .btn-light{background:#f4c542;color:#111}
+    .hero{background:linear-gradient(115deg,#fff9e8 0%,#fff 54%,#fdf1cc 100%);overflow:hidden}
     .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:54px;padding:77px 0 92px}
     .eyebrow{text-transform:uppercase;font-size:12px;color:var(--teal-dark);font-weight:850;letter-spacing:.16em}
     h1,h2,h3,p{margin-top:0}
@@ -41,12 +41,12 @@
     .hero-buttons{display:flex;flex-wrap:wrap;gap:12px;margin:29px 0 26px}
     .micro{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:9px;flex-wrap:wrap}
     .micro strong{color:var(--teal-dark)}
-    .art{min-height:470px;border-radius:36px;background:linear-gradient(145deg,#c9efe1,#ecf9ed 56%,#b8dedc);position:relative;box-shadow:var(--shadow);overflow:hidden;display:grid;place-items:center;padding:20px}
+    .art{min-height:470px;border-radius:36px;background:linear-gradient(145deg,#ffe8a0,#fff9e8 54%,#e3b84f);position:relative;box-shadow:var(--shadow);overflow:hidden;display:grid;place-items:center;padding:20px}
     .art:before,.art:after{content:"";position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.6)}
     .art:before{width:460px;height:460px;left:-120px;top:-140px}.art:after{width:330px;height:330px;right:-120px;bottom:-170px}
-    .house{width:min(330px,90%);position:relative;z-index:1;filter:drop-shadow(0 15px 20px rgba(2,85,74,.12))}
-    .floating{position:absolute;z-index:3;background:white;padding:12px 16px;border-radius:14px;box-shadow:0 14px 40px rgba(18,76,71,.13);font-weight:750;font-size:13px;display:flex;gap:9px;align-items:center}
-    .floating.one{top:55px;right:22px}.floating.two{left:15px;bottom:65px}.check{background:#d9f4e5;color:#04734e;display:inline-grid;place-items:center;width:29px;height:29px;border-radius:50%;font-weight:900}
+    .house{width:min(330px,90%);position:relative;z-index:1;filter:drop-shadow(0 15px 20px rgba(65,44,0,.15))}
+    .floating{position:absolute;z-index:3;background:white;padding:12px 16px;border-radius:14px;box-shadow:0 14px 40px rgba(65,44,0,.15);font-weight:750;font-size:13px;display:flex;gap:9px;align-items:center}
+    .floating.one{top:55px;right:22px}.floating.two{left:15px;bottom:65px}.check{background:#ffebae;color:#694300;display:inline-grid;place-items:center;width:29px;height:29px;border-radius:50%;font-weight:900}
     section{scroll-margin-top:105px}
     .section{padding:88px 0}
     .section-head{text-align:center;max-width:670px;margin:0 auto 42px}
@@ -59,29 +59,35 @@
     .feature p,.step p{color:var(--muted);margin-bottom:0}
     .process{background:var(--cream);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
     .step-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
-    .step-num{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--teal);color:#fff;font-weight:850;margin-bottom:16px}
+    .step-num{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--teal);color:#111;font-weight:850;margin-bottom:16px}
     .split{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
     .booking-card{padding:43px;border-radius:26px;border:1px solid var(--line);box-shadow:var(--shadow);background:white}
     .booking-card h2{font-size:36px}
     .form-label{display:block;font-weight:750;font-size:14px;margin:25px 0 9px}
-    .zip-row{display:flex;gap:10px}.zip-row input{min-width:0;flex:1;border:1.5px solid #bccfce;border-radius:11px;padding:14px 15px;font-size:18px}
+    .zip-row{display:flex;gap:10px}.zip-row input{min-width:0;flex:1;border:1.5px solid #cdbb92;border-radius:11px;padding:14px 15px;font-size:18px}
     .feedback{font-size:14px;margin:13px 0 0;min-height:24px;color:var(--muted)}
-    .feedback.success{color:#046747}.feedback.error{color:#a42323}
+    .feedback.success{color:#755000}.feedback.error{color:#a42323}
     .note{font-size:13px;color:var(--muted)}
     .list{list-style:none;margin:22px 0 0;padding:0}.list li{margin:13px 0;display:flex;gap:11px;align-items:flex-start}.list li:before{content:"✓";color:var(--teal);font-weight:900}
-    .cleaner-area{background:var(--teal-dark);color:#fff}
-    .cleaner-area p{color:#d6f2ed}
+    .cleaner-area{background:#111;color:#fff}
+    .cleaner-area p{color:#e4dbca}
     .cleaner-panel{padding:36px;border:1px solid rgba(255,255,255,.25);border-radius:23px;background:rgba(255,255,255,.08)}
     .cleaner-panel h3{font-size:25px}.cleaner-panel ul{margin-bottom:24px;padding-left:20px}.cleaner-panel li{padding:6px 0}
-    .cleaner-area .eyebrow{color:#abf5de}
-    .smallprint{font-size:13px;color:#d6f2ed}
+    .cleaner-area .eyebrow{color:#f4c542}
+    .smallprint{font-size:13px;color:#e4dbca}
     .faq-grid{max-width:850px;margin:auto;display:grid;gap:12px}
     details{border:1px solid var(--line);border-radius:13px;padding:18px 22px;background:white}summary{font-weight:750;cursor:pointer}details p{margin:12px 0 0;color:var(--muted)}
-    footer{padding:40px 0;background:#102d33;color:#deecea}
+    footer{padding:40px 0;background:#101010;color:#f4ebd3}
     .footer-inner{display:flex;justify-content:space-between;gap:25px;align-items:center;flex-wrap:wrap}
-    .footer-inner a{color:#deecea}.footer-inner small{color:#b8ccca}
+    .footer-inner a{color:#f5cf64}.footer-inner small{color:#d6c9a9}
     @media(max-width:900px){.hero-grid,.split{grid-template-columns:1fr}.hero-grid{padding:55px 0}.art{min-height:380px}.feature-grid,.step-grid{grid-template-columns:1fr 1fr}.nav .nav-link{display:none}}
-    @media(max-width:600px){.container{width:min(100% - 32px,1160px)}.header-inner{min-height:69px}.brand-img{width:138px}.nav{gap:9px}.nav .btn{padding:9px 11px;min-height:43px;font-size:12px}.hero-grid{gap:25px;padding:44px 0 62px}h1{font-size:44px}.lead{font-size:17px}.hero-buttons{flex-direction:column}.hero-buttons .btn{width:100%}.art{min-height:290px;border-radius:23px}.floating{font-size:11px;padding:8px}.floating.one{top:20px}.floating.two{bottom:20px}.house{width:230px}.section{padding:65px 0}.feature-grid,.step-grid{grid-template-columns:1fr}.feature{padding:25px}.booking-card{padding:25px}.zip-row{flex-direction:column}.cleaner-panel{padding:24px}}
+    @media(max-width:600px){.container{width:min(100% - 32px,1160px)}.header-inner{min-height:69px}.brand-img{width:145px}.nav{gap:9px}.nav .btn{padding:9px 11px;min-height:43px;font-size:12px}.hero-grid{gap:25px;padding:44px 0 62px}h1{font-size:44px}.lead{font-size:17px}.hero-buttons{flex-direction:column}.hero-buttons .btn{width:100%}.art{min-height:290px;border-radius:23px}.floating{font-size:11px;padding:8px}.floating.one{top:20px}.floating.two{bottom:20px}.house{width:230px}.section{padding:65px 0}.feature-grid,.step-grid{grid-template-columns:1fr}.feature{padding:25px}.booking-card{padding:25px}.zip-row{flex-direction:column}.cleaner-panel{padding:24px}}
+    .feature{box-shadow:0 7px 30px rgba(40,30,8,.035)}
+    .feature-icon{color:#8e6200}
+    .booking-card{border-top:4px solid #d7a124}
+    .cleaner-panel{border-color:rgba(245,207,100,.38)}
+    .cleaner-area .lead{color:#e4dbca}
+    .brand-word{color:#111}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}.btn:hover{transform:none}}
   </style>
 </head>
@@ -116,20 +122,20 @@
         </div>
         <div class="art" aria-label="Illustration of a bright and tidy home" role="img">
           <svg class="house" viewBox="0 0 360 340" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <ellipse cx="180" cy="304" rx="155" ry="21" fill="#93C9B7" fill-opacity=".55"/>
+            <ellipse cx="180" cy="304" rx="155" ry="21" fill="#CDA94B" fill-opacity=".55"/>
             <path d="M62 151L180 48L298 151V285C298 293 291 300 283 300H77C69 300 62 293 62 285V151Z" fill="#fff"/>
-            <path d="M42 155L180 36L318 155" stroke="#087E79" stroke-width="25" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M93 169H153V232H93V169Z" fill="#BCE9ED" stroke="#168C92" stroke-width="7"/>
-            <path d="M123 169V232M93 201H153" stroke="#168C92" stroke-width="5"/>
-            <path d="M206 169H266V232H206V169Z" fill="#BCE9ED" stroke="#168C92" stroke-width="7"/>
-            <path d="M236 169V232M206 201H266" stroke="#168C92" stroke-width="5"/>
-            <path d="M159 300V243C159 233 167 225 177 225H190C200 225 208 233 208 243V300" fill="#B5E6C6" stroke="#168C92" stroke-width="7"/>
-            <circle cx="196" cy="267" r="4" fill="#168C92"/>
-            <path d="M296 60L305 81L326 90L305 99L296 120L287 99L266 90L287 81L296 60Z" fill="#F9BF50"/>
-            <path d="M71 28L77 41L90 47L77 53L71 66L65 53L52 47L65 41L71 28Z" fill="#F9BF50"/>
-            <path d="M315 215L320 226L331 231L320 236L315 247L310 236L299 231L310 226L315 215Z" fill="#F9BF50"/>
-            <path d="M76 258C54 228 30 247 33 267C22 285 39 300 59 294L83 300L76 258Z" fill="#51B98A"/>
-            <path d="M70 301V253" stroke="#0C795D" stroke-width="6" stroke-linecap="round"/>
+            <path d="M42 155L180 36L318 155" stroke="#101010" stroke-width="25" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M93 169H153V232H93V169Z" fill="#FDEAB0" stroke="#A97805" stroke-width="7"/>
+            <path d="M123 169V232M93 201H153" stroke="#A97805" stroke-width="5"/>
+            <path d="M206 169H266V232H206V169Z" fill="#FDEAB0" stroke="#A97805" stroke-width="7"/>
+            <path d="M236 169V232M206 201H266" stroke="#A97805" stroke-width="5"/>
+            <path d="M159 300V243C159 233 167 225 177 225H190C200 225 208 233 208 243V300" fill="#F3CD63" stroke="#A97805" stroke-width="7"/>
+            <circle cx="196" cy="267" r="4" fill="#A97805"/>
+            <path d="M296 60L305 81L326 90L305 99L296 120L287 99L266 90L287 81L296 60Z" fill="#E9AC19"/>
+            <path d="M71 28L77 41L90 47L77 53L71 66L65 53L52 47L65 41L71 28Z" fill="#E9AC19"/>
+            <path d="M315 215L320 226L331 231L320 236L315 247L310 236L299 231L310 226L315 215Z" fill="#E9AC19"/>
+            <path d="M76 258C54 228 30 247 33 267C22 285 39 300 59 294L83 300L76 258Z" fill="#C99519"/>
+            <path d="M70 301V253" stroke="#795300" stroke-width="6" stroke-linecap="round"/>
           </svg>
           <div class="floating one"><span class="check">✓</span> Your home, your schedule</div>
           <div class="floating two"><span aria-hidden="true">✨</span> A fresh start feels good</div>
