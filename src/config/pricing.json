@@ -1,0 +1,282 @@
+{
+  "company": "JK Cleaning",
+  "version": "1.0",
+  "currency": "USD",
+  "money_unit": "cents in the database, dollars in this file",
+  "service_area": {
+    "rule": "Address state must be RI. Exclude zip 02807 (New Shoreham / Block Island) in v1.",
+    "coverage_note": "All Rhode Island from 02861 Pawtucket through Coventry 02816 and Exeter 02822, and every other RI zip except 02807.",
+    "excluded_zips": [
+      "02807"
+    ]
+  },
+  "settings": {
+    "cleaner_share": 0.76,
+    "addon_cleaner_share": 0.8,
+    "drive_cleaner_share": 0.8,
+    "processing_rate": 0.029,
+    "processing_fixed": 0.3,
+    "reserve_rate": 0.03,
+    "deep_multiplier": 1.7,
+    "move_multiplier": 1.9,
+    "weekly_discount": 0.12,
+    "biweekly_discount": 0.08,
+    "monthly_discount": 0,
+    "extra_full_bath": 28,
+    "extra_half_bath": 16,
+    "minimum_standard_job": 159,
+    "drive_adder": 20,
+    "drive_adder_miles": 20,
+    "quote_ttl_minutes": 30,
+    "offer_ttl_minutes": 20,
+    "included_full_baths": 1
+  },
+  "bands": [
+    {
+      "name": "Studio / small",
+      "from_sqft": 1,
+      "to_sqft": 800,
+      "rate_per_sqft": 0.2,
+      "floor": 159
+    },
+    {
+      "name": "Apartment",
+      "from_sqft": 801,
+      "to_sqft": 1200,
+      "rate_per_sqft": 0.155,
+      "floor": 169
+    },
+    {
+      "name": "Small home",
+      "from_sqft": 1201,
+      "to_sqft": 1600,
+      "rate_per_sqft": 0.145,
+      "floor": 189
+    },
+    {
+      "name": "Typical RI home",
+      "from_sqft": 1601,
+      "to_sqft": 2000,
+      "rate_per_sqft": 0.138,
+      "floor": 229
+    },
+    {
+      "name": "Large home",
+      "from_sqft": 2001,
+      "to_sqft": 2500,
+      "rate_per_sqft": 0.13,
+      "floor": 269
+    },
+    {
+      "name": "Big home",
+      "from_sqft": 2501,
+      "to_sqft": 3200,
+      "rate_per_sqft": 0.122,
+      "floor": 319
+    },
+    {
+      "name": "Estate",
+      "from_sqft": 3201,
+      "to_sqft": 4000,
+      "rate_per_sqft": 0.115,
+      "floor": 379
+    },
+    {
+      "name": "Quote required",
+      "from_sqft": 4001,
+      "to_sqft": 6000,
+      "rate_per_sqft": 0.108,
+      "floor": 449
+    }
+  ],
+  "services": [
+    {
+      "code": "standard",
+      "name": "Standard cleaning",
+      "multiplier": 1,
+      "discount_allowed": true
+    },
+    {
+      "code": "deep",
+      "name": "Deep cleaning",
+      "multiplier": 1.7,
+      "discount_allowed": false
+    },
+    {
+      "code": "move",
+      "name": "Move-in / move-out",
+      "multiplier": 1.9,
+      "discount_allowed": false
+    }
+  ],
+  "frequencies": [
+    {
+      "code": "once",
+      "name": "One-time",
+      "discount": 0
+    },
+    {
+      "code": "weekly",
+      "name": "Weekly",
+      "discount": 0.12
+    },
+    {
+      "code": "biweekly",
+      "name": "Biweekly",
+      "discount": 0.08
+    },
+    {
+      "code": "monthly",
+      "name": "Monthly",
+      "discount": 0
+    }
+  ],
+  "addons": [
+    {
+      "code": "oven",
+      "name": "Inside oven",
+      "price": 45,
+      "included_in": [
+        "deep",
+        "move"
+      ]
+    },
+    {
+      "code": "fridge",
+      "name": "Inside fridge",
+      "price": 35,
+      "included_in": [
+        "deep",
+        "move"
+      ]
+    },
+    {
+      "code": "cabinets",
+      "name": "Inside kitchen cabinets",
+      "price": 55,
+      "included_in": [
+        "deep",
+        "move"
+      ]
+    },
+    {
+      "code": "windows_floor",
+      "name": "Interior windows, per floor",
+      "price": 40,
+      "unit": "floor",
+      "included_in": []
+    },
+    {
+      "code": "laundry_load",
+      "name": "Laundry, wash dry fold, per load",
+      "price": 30,
+      "unit": "load",
+      "included_in": []
+    },
+    {
+      "code": "dishes",
+      "name": "Dishes, one sink",
+      "price": 20,
+      "included_in": []
+    },
+    {
+      "code": "patio",
+      "name": "Patio or balcony",
+      "price": 35,
+      "included_in": []
+    },
+    {
+      "code": "basement",
+      "name": "Unfinished basement, not in sq ft",
+      "price": 45,
+      "included_in": []
+    },
+    {
+      "code": "pet_hair",
+      "name": "Pet hair",
+      "price": 30,
+      "included_in": []
+    },
+    {
+      "code": "priority_48h",
+      "name": "Same-week, under 48 hours",
+      "price": 35,
+      "included_in": []
+    },
+    {
+      "code": "same_day",
+      "name": "Same-day",
+      "price": 55,
+      "included_in": []
+    },
+    {
+      "code": "supplies",
+      "name": "Supplies, if customer has none",
+      "price": 15,
+      "included_in": []
+    }
+  ],
+  "acceptance_tests": [
+    {
+      "sqft": 1500,
+      "full_baths": 2,
+      "half_baths": 1,
+      "service": "standard",
+      "frequency": "biweekly",
+      "drive": false,
+      "addons": 0,
+      "customer": 240.58,
+      "cleaner": 182.84
+    },
+    {
+      "sqft": 1200,
+      "full_baths": 1,
+      "half_baths": 0,
+      "service": "standard",
+      "frequency": "once",
+      "drive": false,
+      "addons": 0,
+      "customer": 186,
+      "cleaner": 141
+    },
+    {
+      "sqft": 600,
+      "full_baths": 1,
+      "half_baths": 0,
+      "service": "standard",
+      "frequency": "once",
+      "drive": false,
+      "addons": 0,
+      "customer": 159,
+      "cleaner": 121
+    },
+    {
+      "sqft": 2000,
+      "full_baths": 1,
+      "half_baths": 0,
+      "service": "deep",
+      "frequency": "once",
+      "drive": false,
+      "addons": 0,
+      "customer": 469,
+      "cleaner": 356
+    },
+    {
+      "sqft": 1600,
+      "full_baths": 1,
+      "half_baths": 0,
+      "service": "move",
+      "frequency": "once",
+      "drive": false,
+      "addons": 0,
+      "customer": 441,
+      "cleaner": 335
+    }
+  ],
+  "bathroom_policy": {
+    "included_full_baths": 1,
+    "extra_full_bath_dollars": 28,
+    "extra_half_bath_dollars": 16,
+    "rule": "Include one full bathroom in base price; add $28 for each additional full bathroom and $16 for each half bathroom. Apply standard recurring discounts to base plus bathroom extras."
+  }
+}
