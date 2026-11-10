@@ -19,7 +19,8 @@ function setup({ owner = userId, status = "active", expired = false } = {}) {
   const calls = [];
   const saved = { id: quoteId, customer_id: owner, service_id: serviceId,
     status, expires_at: expired ? "2000-01-01T00:00:00Z" : "2099-01-01T00:00:00Z",
-    postal_code: "02861", state: "RI", customer_total_cents: "24058" };
+    postal_code: "02861", state: "RI", customer_total_cents: "24058",
+    square_feet: 1500, full_baths: 2, half_baths: 1, service_code: "standard", addon_selections: [] };
   let used = false;
   const client = {
     async query(sql, params) {
@@ -47,6 +48,7 @@ function setup({ owner = userId, status = "active", expired = false } = {}) {
       if (name === "express") return { Router: () => router };
       if (name === "../db") return { connect: async () => client };
       if (name === "../middleware/authenticate") return { authenticateCustomer() {} };
+      if (name === "../services/durationService") return require(path.join(__dirname, "../src/services/durationService"));
       throw new Error(`Unexpected dependency: ${name}`);
     }, mod, mod.exports, { env: { ENABLE_DEV_BOOKINGS: "true", NODE_ENV: "development" } }, console
   );
@@ -65,6 +67,10 @@ test("creates booking from owned quote and consumes quote in one transaction", a
   assert.equal(result.statusCode, 201);
   assert.equal(result.payload.booking.quoted_price_cents, "24058");
   assert.equal(calls[0].sql, "BEGIN");
+  const insertion = calls.find(c => c.sql.includes("INSERT INTO public.bookings"));
+  assert.match(insertion.sql, /required_crew_size/);
+  assert.equal(insertion.params[6], "14:00"); // 1500 sqft + bath adjustments = 240 minutes
+  assert.equal(insertion.params[7], 1);
   assert.ok(calls.some(c => c.sql.includes("FOR UPDATE")));
   assert.ok(calls.some(c => c.sql.includes("INSERT INTO public.bookings")));
   assert.ok(calls.some(c => c.sql.includes("UPDATE public.quotes")));

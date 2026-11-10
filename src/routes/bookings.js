@@ -3,6 +3,7 @@
 const express = require("express");
 const pool = require("../db");
 const { authenticateCustomer } = require("../middleware/authenticate");
+const { estimateJob, scheduledEnd, DurationError } = require("../services/durationService");
 
 const router = express.Router();
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -53,7 +54,8 @@ router.post("/", authenticateCustomer, async (req, res) => {
     // Serialize concurrent booking attempts for the same quote.
     const found = await client.query(`
       SELECT id, customer_id, service_id, status, expires_at,
-             postal_code, state, customer_total_cents
+             postal_code, state, customer_total_cents,
+             square_feet, full_baths, half_baths, service_code, addon_selections
       FROM public.quotes
       WHERE id = $1
       FOR UPDATE
@@ -92,18 +94,24 @@ router.post("/", authenticateCustomer, async (req, res) => {
       throw new Error("Authenticated customer profile missing or inconsistent");
     }
 
+    // Derive crew size and duration ONLY from the locked, persisted quote.
+    // The client cannot supply either value.
+    const schedule = estimateJob(savedQuote);
+    const endTime = scheduledEnd(start_time, schedule.estimated_minutes);
+
     const created = await client.query(`
       INSERT INTO public.bookings (
         customer_id, service_id, quote_id, quoted_price_cents,
-        scheduled_date, start_time, address_line1, address_line2,
+        scheduled_date, start_time, end_time, required_crew_size, address_line1, address_line2,
         city, state, postal_code, customer_notes, status
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, 'RI', $10, $11, 'requested'
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'RI', $12, $13, 'requested'
       )
-      RETURNING id, quote_id, status, scheduled_date, start_time,
-                quoted_price_cents, created_at
+      RETURNING id, quote_id, status, scheduled_date, start_time, end_time,
+                required_crew_size, quoted_price_cents, created_at
     `, [customerProfile.rows[0].id, savedQuote.service_id, savedQuote.id,
         savedQuote.customer_total_cents, scheduled_date, start_time,
+        endTime, schedule.required_crew_size,
         address_line1.trim(), address_line2?.trim() || null, city.trim(),
         postal_code, customer_notes?.trim() || null]);
 
@@ -120,6 +128,7 @@ router.post("/", authenticateCustomer, async (req, res) => {
     return res.status(201).json({
       status: "created",
       booking: created.rows[0],
+      scheduling: schedule,
       disclaimer: "Development-only booking request. Address, cleaner availability, and payment have not been verified."
     });
   } catch (error) {
@@ -127,6 +136,9 @@ router.post("/", authenticateCustomer, async (req, res) => {
       try { await client.query("ROLLBACK"); } catch (rollbackError) {
         console.error("Booking rollback failed:", rollbackError);
       }
+    }
+    if (error instanceof DurationError) {
+      return res.status(422).json({ error: error.message });
     }
     if (error.code === "23505") {
       return res.status(409).json({ error: "Quote already has a booking" });
