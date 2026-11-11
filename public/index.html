@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101010">
+  <meta name="theme-color" content="#08090b">
   <meta name="description" content="Scrubado connects Rhode Island homeowners with independent cleaners. No memberships. Simple cleaning requests, transparent quotes, and flexible scheduling.">
   <title>Scrubado | Clean Homes. Brighter Days.</title>
   <style>
@@ -89,6 +89,79 @@
     .cleaner-area .lead{color:#e4dbca}
     .brand-word{color:#111}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}.btn:hover{transform:none}}
+
+    /* Scrubado official dark theme — black, champagne, and metallic gold. */
+    :root{
+      color-scheme:dark;
+      --ink:#f6f3eb;
+      --muted:#c9c3b6;
+      --teal:#e5b537;
+      --teal-dark:#f5cf64;
+      --light:#282214;
+      --line:#413721;
+      --cream:#101114;
+      --white:#17181b;
+      --shadow:0 18px 60px rgba(0,0,0,.38);
+    }
+    body{background:#0b0c0e;color:var(--ink)}
+    .skip{background:#191a1d;color:#fff}
+    .announcement{background:linear-gradient(90deg,#090909,#201805 50%,#090909);color:#f7d57b;border-bottom:1px solid #443315}
+    .header{background:rgba(13,14,16,.97);border-bottom:1px solid #373021;backdrop-filter:blur(18px)}
+    /* The supplied logo has a white background; show it on a deliberate brand plaque. */
+    .brand-img{width:210px;max-height:66px;padding:7px 10px;border-radius:10px;background:#fff;object-position:center;box-shadow:0 0 0 1px rgba(232,185,62,.28)}
+    .brand-word{color:#f5cf64}
+    .nav a{color:#f3eee2}
+    .nav a:hover{color:#f4c542}
+    .btn-primary{background:linear-gradient(125deg,#ffe18a 0%,#f2c64a 45%,#b9820b 100%);color:#111;box-shadow:0 9px 25px rgba(220,166,33,.18)}
+    .btn-primary:hover{background:linear-gradient(125deg,#ffe9a7,#d9a226)}
+    .btn-outline{background:#191817;color:#f8d676;border-color:#bd8d27}
+    .btn-outline:hover{background:#292316;color:#fff0bc}
+    .btn-light{background:#f4c542;color:#14100a}
+    .hero{background:radial-gradient(ellipse at 79% 35%,rgba(178,119,17,.19) 0%,transparent 45%),linear-gradient(115deg,#0c0d10 0%,#171512 55%,#0a0b0d 100%);border-bottom:1px solid #332a1a}
+    .eyebrow{color:#f2c852}
+    h1 span{color:#f3c74d}
+    .lead,.section-head p,.feature p,.step p,.note,.feedback,details p{color:var(--muted)}
+    .micro{color:#c3bba9}
+    .micro strong{color:#f5cc62}
+    .art{background:radial-gradient(ellipse at 30% 20%,#564119 0%,#2b2416 46%,#0e1115 100%);border:1px solid #76551d;box-shadow:0 24px 65px rgba(0,0,0,.38)}
+    .art:before,.art:after{border-color:rgba(255,218,131,.16)}
+    .house{filter:drop-shadow(0 15px 22px rgba(0,0,0,.36))}
+    .floating{background:#1b1c20;color:#f6f1e4;border:1px solid #685125;box-shadow:0 14px 40px rgba(0,0,0,.3)}
+    .check{background:#403013;color:#ffda72}
+    .section{background:#0b0c0e}
+    .feature{background:linear-gradient(150deg,#1d1d20,#151618);border-color:#403621;box-shadow:0 10px 35px rgba(0,0,0,.19)}
+    .feature-icon{background:#302616;color:#f2c852}
+    .process{background:#121316;border-color:#3b321e}
+    .step-num{background:linear-gradient(135deg,#ffe087,#c18a16);color:#111}
+    .booking-card{background:linear-gradient(160deg,#1b1c1f,#141518);border:1px solid #514026;border-top:4px solid #e8b738;box-shadow:var(--shadow)}
+    .zip-row input{background:#0c0d10;color:#fff;border:1.5px solid #756139}
+    .zip-row input::placeholder{color:#a9a193}
+    .zip-row input:focus-visible{outline:3px solid #e8bb48;outline-offset:2px}
+    .feedback.success{color:#9fe0b1}
+    .feedback.error{color:#ff9f9f}
+    .list li:before{color:#f5ca56}
+    .cleaner-area{background:radial-gradient(ellipse at 12% 30%,#2f2310,#101113 58%,#090a0b 100%);color:#fff;border-top:1px solid #423519;border-bottom:1px solid #423519}
+    .cleaner-area .lead,.cleaner-area p,.smallprint{color:#d2cab9}
+    .cleaner-panel{background:rgba(255,255,255,.035);border-color:rgba(245,207,100,.36)}
+    .cleaner-area .eyebrow{color:#f4c542}
+    details{background:#18191c;border-color:#423822}
+    summary{color:#f5f1e6}
+    details[open]{border-color:#9d792e}
+    footer{background:#08090b;border-top:1px solid #463717;color:#f3ebd6}
+    .footer-inner a{color:#f5cf64}
+    .footer-inner small{color:#c9bda4}
+    @media(max-width:600px){.brand-img{width:145px;max-height:56px;padding:5px 7px}}
+
+    /* Hybrid brand header: original logo on uninterrupted white, dark site below */
+    .header{background:#fff;border-bottom:2px solid #c99519;backdrop-filter:none}
+    .brand{background:transparent;border:0;box-shadow:none;padding:0;color:#101010}
+    .brand-img{width:210px;max-height:75px;padding:0;border-radius:0;background:transparent;box-shadow:none;object-fit:contain;object-position:left center}
+    .brand-word{color:#101010}
+    .header .nav a:not(.btn){color:#101010}
+    .header .nav a:not(.btn):hover{color:#936200}
+    .header .nav .btn-outline{background:#101010;color:#f4c542;border:2px solid #c99519}
+    .header .nav .btn-outline:hover{background:#28231a;color:#fff}
+    @media(max-width:600px){.brand-img{width:145px;max-height:56px;padding:0}}
   </style>
 </head>
 <body>
