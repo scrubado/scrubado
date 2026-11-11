@@ -3,6 +3,7 @@
 const express = require("express");
 const pool = require("../db");
 const { authenticateAdmin } = require("../middleware/authenticateAdmin");
+const { allocateCrewPayouts, CrewPayoutError } = require("../services/crewPayoutService");
 
 const router = express.Router();
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -113,6 +114,42 @@ router.patch("/cleaners/:id/verify", authenticateAdmin, async (req, res) => {
     return res.status(500).json({ error: "Unable to verify cleaner" });
   } finally {
     if (client) client.release();
+  }
+});
+
+
+// Development-only accounting allocation. No Stripe charge, transfer, or confirmation.
+// :id is bookings.id. Only an active administrator may trigger the service.
+router.post("/bookings/:id/allocate-payouts", authenticateAdmin, async (req, res) => {
+  if (process.env.NODE_ENV === "production" ||
+      process.env.ENABLE_DEV_PAYOUT_ALLOCATION !== "true") {
+    return res.status(503).json({ error: "Payout allocation is not enabled" });
+  }
+  if (!UUID_PATTERN.test(req.params.id)) {
+    return res.status(400).json({ error: "Invalid booking ID" });
+  }
+
+  try {
+    // AuthenticateAdmin verifies the token. Recheck the live user record too.
+    const actor = await pool.query(`
+      SELECT id FROM public.users
+      WHERE id = $1 AND role = 'admin' AND status = 'active'
+    `, [req.admin.id]);
+    if (actor.rowCount !== 1) {
+      return res.status(403).json({ error: "Administrator access required" });
+    }
+
+    const result = await allocateCrewPayouts(req.params.id);
+    return res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof CrewPayoutError) {
+      return res.status(error.status).json({ error: error.message });
+    }
+    console.error("Payout allocation failed:", {
+      code: error.code,
+      message: error.message
+    });
+    return res.status(503).json({ error: "Unable to allocate crew payouts" });
   }
 });
 
