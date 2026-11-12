@@ -6,6 +6,10 @@ const pool = require("./db");
 const quotesRouter = require("./routes/quotes");
 const authRouter = require("./routes/auth");
 const bookingsRouter = require("./routes/bookings");
+const adminRouter = require("./routes/admin");
+const cleanerJobsRouter = require("./routes/cleanerJobs");
+const cleanerAvailabilityRouter = require("./routes/cleanerAvailability");
+const cleanerAcceptanceRouter = require("./routes/cleanerAcceptance");
 
 const app = express();
 
@@ -106,5 +110,9 @@ app.get(["/services", "/api/services"], async (req, res) => {
 // Preliminary server-side quotes; does not create bookings or collect payment.
 app.use(["/quotes", "/api/quotes"], normalizeAuthBody, quotesRouter);
 app.use(["/bookings", "/api/bookings"], normalizeAuthBody, bookingsRouter);
+app.use(["/admin", "/api/admin"], adminRouter);
+app.use(["/cleaner", "/api/cleaner"], cleanerJobsRouter);
+app.use(["/cleaner", "/api/cleaner"], normalizeAuthBody, cleanerAvailabilityRouter);
+app.use(["/cleaner", "/api/cleaner"], normalizeAuthBody, cleanerAcceptanceRouter);
 
 module.exports = app;
