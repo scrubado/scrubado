@@ -6,6 +6,7 @@ const pool = require("./db");
 const quotesRouter = require("./routes/quotes");
 const authRouter = require("./routes/auth");
 const bookingsRouter = require("./routes/bookings");
+const bookingCancellationRouter = require("./routes/bookingCancellation");
 const paymentsRouter = require("./routes/payments");
 const stripeWebhookRouter = require("./routes/stripeWebhook");
 const adminRouter = require("./routes/admin");
@@ -117,6 +118,7 @@ app.get(["/services", "/api/services"], async (req, res) => {
 // Preliminary server-side quotes; does not create bookings or collect payment.
 app.use(["/quotes", "/api/quotes"], normalizeAuthBody, quotesRouter);
 app.use(["/bookings", "/api/bookings"], normalizeAuthBody, bookingsRouter);
+app.use(["/bookings", "/api/bookings"], normalizeAuthBody, bookingCancellationRouter);
 app.use(["/payments", "/api/payments"], normalizeAuthBody, paymentsRouter);
 app.use(["/admin", "/api/admin"], adminRouter);
 app.use(["/cleaner", "/api/cleaner"], cleanerJobsRouter);
