@@ -6,6 +6,8 @@ const pool = require("./db");
 const quotesRouter = require("./routes/quotes");
 const authRouter = require("./routes/auth");
 const bookingsRouter = require("./routes/bookings");
+const paymentsRouter = require("./routes/payments");
+const stripeWebhookRouter = require("./routes/stripeWebhook");
 const adminRouter = require("./routes/admin");
 const cleanerJobsRouter = require("./routes/cleanerJobs");
 const cleanerAvailabilityRouter = require("./routes/cleanerAvailability");
@@ -15,6 +17,11 @@ const app = express();
 
 app.use(helmet());
 app.use(cors());
+
+// Stripe verifies signatures against the original request bytes.
+// Mount this webhook before the global JSON body parser.
+app.use(["/payments/webhook", "/api/payments/webhook"], stripeWebhookRouter);
+
 app.use(express.json());
 app.use(morgan("dev"));
 
@@ -110,6 +117,7 @@ app.get(["/services", "/api/services"], async (req, res) => {
 // Preliminary server-side quotes; does not create bookings or collect payment.
 app.use(["/quotes", "/api/quotes"], normalizeAuthBody, quotesRouter);
 app.use(["/bookings", "/api/bookings"], normalizeAuthBody, bookingsRouter);
+app.use(["/payments", "/api/payments"], normalizeAuthBody, paymentsRouter);
 app.use(["/admin", "/api/admin"], adminRouter);
 app.use(["/cleaner", "/api/cleaner"], cleanerJobsRouter);
 app.use(["/cleaner", "/api/cleaner"], normalizeAuthBody, cleanerAvailabilityRouter);
