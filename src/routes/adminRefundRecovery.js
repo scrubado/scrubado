@@ -8,6 +8,7 @@ const express = require("express");
 const Stripe = require("stripe");
 const pool = require("../db");
 const { authenticateAdmin } = require("../middleware/authenticateAdmin");
+const { reconcileRefund } = require("../services/refundReconciliationService");
 
 const router = express.Router();
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -135,6 +136,70 @@ router.get("/refunds/:id/recovery-status", authenticateAdmin, async (req, res) =
   } catch (error) {
     console.error("Refund recovery diagnosis failed:", error.type || error.code || error.message);
     return res.status(503).json({ error: "Refund diagnosis unavailable; do not retry the refund blindly" });
+  }
+});
+
+
+// Admin-only recovery. Does not initiate Stripe refunds. A verified existing
+// Stripe refund is reconciled into Neon atomically via the shared service.
+router.post("/refunds/:id/reconcile", authenticateAdmin, async (req, res) => {
+  if (process.env.NODE_ENV === "production" ||
+      process.env.ENABLE_DEV_PAYMENT_INTENTS !== "true") {
+    return res.status(503).json({ error: "Test refund recovery is disabled" });
+  }
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key || !key.startsWith("sk_test_") || !UUID.test(req.params.id || "")) {
+    return res.status(400).json({ error: "Invalid test configuration or refund ID" });
+  }
+  if (req.body && (typeof req.body !== "object" || Array.isArray(req.body) ||
+                   Object.keys(req.body).length !== 0)) {
+    return res.status(400).json({ error: "Expected an empty JSON object" });
+  }
+  try {
+    const actor = await pool.query(`
+      SELECT id FROM public.users
+      WHERE id = $1 AND role = 'admin' AND status = 'active'
+    `, [req.admin.id]);
+    if (actor.rowCount !== 1) {
+      return res.status(403).json({ error: "Administrator access required" });
+    }
+    const data = await pool.query(`
+      SELECT r.id, r.stripe_refund_id, p.stripe_payment_intent_id
+      FROM public.payment_refunds r
+      JOIN public.payments p ON p.id = r.payment_id
+      WHERE r.id = $1
+    `, [req.params.id]);
+    if (data.rowCount !== 1) return res.status(404).json({ error: "Refund operation not found" });
+    const row = data.rows[0];
+    if (!row.stripe_payment_intent_id) {
+      return res.status(409).json({ error: "Missing original PaymentIntent; review required" });
+    }
+    const stripe = new Stripe(key, { timeout: 12000, maxNetworkRetries: 1 });
+    let refund;
+    if (row.stripe_refund_id) {
+      refund = await stripe.refunds.retrieve(row.stripe_refund_id);
+    } else {
+      // An interrupted request can leave the local Stripe refund ID blank.
+      // Search but NEVER issue another refund if we find none or >1.
+      const found = await stripe.refunds.list({
+        payment_intent: row.stripe_payment_intent_id, limit: 100
+      });
+      const matches = found.data.filter(r => r.metadata?.refund_operation_id === row.id);
+      if (found.has_more || matches.length !== 1) {
+        return res.status(409).json({
+          error: "No unique existing Stripe refund located; manual review required",
+          matching_refunds: matches.length,
+          has_more: Boolean(found.has_more)
+        });
+      }
+      refund = matches[0];
+    }
+    const result = await reconcileRefund({ stripe, refund, adminUserId: req.admin.id });
+    if (result.ignored) return res.status(409).json({ error: "Refund identity requires review" });
+    return res.status(200).json({ refund_operation_id: row.id, ...result, no_new_refund: true });
+  } catch (error) {
+    console.error("Admin refund recovery failed:", error.type || error.code || error.message);
+    return res.status(503).json({ error: "Recovery incomplete; investigate before retrying" });
   }
 });
 
