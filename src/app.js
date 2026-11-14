@@ -11,6 +11,7 @@ const bookingRefundRouter = require("./routes/bookingRefund");
 const paymentsRouter = require("./routes/payments");
 const stripeWebhookRouter = require("./routes/stripeWebhook");
 const adminRouter = require("./routes/admin");
+const adminRefundRecoveryRouter = require("./routes/adminRefundRecovery");
 const cleanerJobsRouter = require("./routes/cleanerJobs");
 const cleanerAvailabilityRouter = require("./routes/cleanerAvailability");
 const cleanerAcceptanceRouter = require("./routes/cleanerAcceptance");
@@ -123,6 +124,7 @@ app.use(["/bookings", "/api/bookings"], normalizeAuthBody, bookingCancellationRo
 app.use(["/bookings", "/api/bookings"], normalizeAuthBody, bookingRefundRouter);
 app.use(["/payments", "/api/payments"], normalizeAuthBody, paymentsRouter);
 app.use(["/admin", "/api/admin"], adminRouter);
+app.use(["/admin", "/api/admin"], adminRefundRecoveryRouter);
 app.use(["/cleaner", "/api/cleaner"], cleanerJobsRouter);
 app.use(["/cleaner", "/api/cleaner"], normalizeAuthBody, cleanerAvailabilityRouter);
 app.use(["/cleaner", "/api/cleaner"], normalizeAuthBody, cleanerAcceptanceRouter);
