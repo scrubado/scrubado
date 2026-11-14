@@ -115,7 +115,7 @@ router.post("/create-intent", authenticateCustomer, async (req, res) => {
       intent = await stripe.paymentIntents.create({
         amount,
         currency: "usd",
-        capture_method: "manual",
+        capture_method: "automatic_async",
         automatic_payment_methods: { enabled: true, allow_redirects: "never" },
         metadata: {
           booking_id: bookingId,
@@ -127,6 +127,12 @@ router.post("/create-intent", authenticateCustomer, async (req, res) => {
     if (intent.livemode || intent.amount !== amount || intent.currency !== "usd" ||
         intent.metadata.booking_id !== bookingId || intent.metadata.payment_id !== payment.id) {
       throw new Error("Stripe PaymentIntent does not match the booking");
+    }
+    // Existing manual-capture intents must not be silently reused under
+    // the pay-at-confirmation policy. Require a new booking/payment flow instead.
+    if (intent.capture_method !== "automatic_async") {
+      await client.query("ROLLBACK"); inTransaction = false;
+      return res.status(409).json({ error: "Legacy payment capture method requires reconciliation" });
     }
     if (!["requires_payment_method", "requires_confirmation", "requires_action"].includes(intent.status)) {
       await client.query("ROLLBACK"); inTransaction = false;
@@ -149,8 +155,8 @@ router.post("/create-intent", authenticateCustomer, async (req, res) => {
       currency: "usd",
       payment_intent_id: intent.id,
       client_secret: intent.client_secret,
-      capture_method: "manual",
-      note: "Test mode only. No card has been authorized or charged. Payment confirmation requires a signed webhook."
+      capture_method: intent.capture_method,
+      note: "Test mode only. Payment is collected upon successful confirmation; booking confirmation requires a verified Stripe webhook."
     });
   } catch (error) {
     if (client && inTransaction) {
