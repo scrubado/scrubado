@@ -81,7 +81,16 @@ router.get("/payments/:id/recovery-status", authenticateAdmin, async (req, res) 
       customer: p.customer_id === p.booking_customer_id,
       booking_metadata: intent.metadata?.booking_id === p.booking_id,
       payment_metadata: intent.metadata?.payment_id === p.payment_id,
-      capture_method: intent.capture_method === "automatic_async",
+      // Permit only fully cancelled, uncaptured legacy manual-capture intents.
+      // Active or captured manual-capture payments remain review-required.
+      capture_method: intent.capture_method === "automatic_async" || (
+        intent.capture_method === "manual" &&
+        intent.status === "canceled" &&
+        p.payment_status === "cancelled" &&
+        p.booking_status === "cancelled" &&
+        intent.amount_received === 0 &&
+        p.refund_status == null
+      ),
       captured_amount: intent.status !== "succeeded" || intent.amount_received === cents
     };
     const identityValid = Object.values(identityChecks).every(Boolean);
@@ -132,6 +141,7 @@ router.get("/payments/:id/recovery-status", authenticateAdmin, async (req, res) 
       },
       identity_checks: identityChecks,
       identities_match: identityValid,
+      legacy_capture_method: intent.capture_method === "manual",
       expected_local_payment_status: expectedDbStatus,
       expected_booking_status: bookingExpected,
       payment_status_match: paymentStatusMatch,
