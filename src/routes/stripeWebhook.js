@@ -1,7 +1,7 @@
 "use strict";
 
 // Save as src/routes/stripeWebhook.js.
-// DEVELOPMENT/STRIPE TEST MODE ONLY.
+// STRIPE TEST MODE ONLY (including Netlify production hosting).
 // Must be mounted BEFORE express.json() so Stripe receives the signed raw body.
 // A verified succeeded PaymentIntent and booking confirmation share ONE DB transaction.
 
@@ -49,10 +49,9 @@ async function processRefundEvent(stripe, event, res) {
 }
 
 router.post("/", express.raw({ type: "application/json", limit: "256kb" }), async (req, res) => {
-  if (process.env.NODE_ENV === "production" ||
-      process.env.ENABLE_DEV_PAYMENT_INTENTS !== "true") {
-    return res.status(503).json({ error: "Payment webhooks are not enabled" });
-  }
+  // Webhook receipt is independent of dev-only PaymentIntent creation.
+  // Netlify runs with NODE_ENV=production even while Stripe is in test mode.
+  // Below: require test credentials, verify Stripe's signature, and reject live events.
   const key = process.env.STRIPE_SECRET_KEY;
   const signingSecret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!key || !key.startsWith("sk_test_") ||
