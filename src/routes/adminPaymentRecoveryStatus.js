@@ -9,13 +9,10 @@ const express = require("express");
 const Stripe = require("stripe");
 const pool = require("../db");
 const { authenticateAdmin } = require("../middleware/authenticateAdmin");
+const { evaluatePaymentReconciliation } = require("../services/paymentReconciliationChecks");
 
 const router = express.Router();
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const stripeStates = new Set([
-  "requires_payment_method", "requires_confirmation", "requires_action",
-  "processing", "requires_capture", "canceled", "succeeded"
-]);
 
 router.get("/payments/:id/recovery-status", authenticateAdmin, async (req, res) => {
   if (process.env.NODE_ENV === "production" ||
@@ -68,56 +65,12 @@ router.get("/payments/:id/recovery-status", authenticateAdmin, async (req, res) 
 
     const stripe = new Stripe(key, { timeout: 12000, maxNetworkRetries: 1 });
     const intent = await stripe.paymentIntents.retrieve(p.stripe_payment_intent_id);
-    // Compare current Stripe state, not stale webhook payloads.
-    const expectedDbStatus = intent.status === "canceled" ? "cancelled" : intent.status;
+    // Compare current Stripe state using the separately testable pure rules.
+    const assessment = evaluatePaymentReconciliation(p, intent);
     const cents = Number(p.payment_amount_cents);
-    const identityChecks = {
-      test_mode: intent.livemode === false,
-      payment_intent_id: intent.id === p.stripe_payment_intent_id,
-      recognized_stripe_status: stripeStates.has(intent.status),
-      currency: intent.currency === "usd" && p.payment_currency === "usd",
-      amount: Number.isSafeInteger(cents) && cents > 0 && intent.amount === cents,
-      booking_quote_amount: String(p.quoted_price_cents) === String(p.payment_amount_cents),
-      customer: p.customer_id === p.booking_customer_id,
-      booking_metadata: intent.metadata?.booking_id === p.booking_id,
-      payment_metadata: intent.metadata?.payment_id === p.payment_id,
-      // Permit only fully cancelled, uncaptured legacy manual-capture intents.
-      // Active or captured manual-capture payments remain review-required.
-      capture_method: intent.capture_method === "automatic_async" || (
-        intent.capture_method === "manual" &&
-        intent.status === "canceled" &&
-        p.payment_status === "cancelled" &&
-        p.booking_status === "cancelled" &&
-        intent.amount_received === 0 &&
-        p.refund_status == null
-      ),
-      captured_amount: intent.status !== "succeeded" || intent.amount_received === cents
-    };
-    const identityValid = Object.values(identityChecks).every(Boolean);
-
-    // Stripe's payment stays succeeded after a customer refund. The booking
-    // should then be cancelled, not confirmed. Don't treat that as a mismatch.
-    const hasSuccessfulRefund = p.refund_status === "succeeded";
-    const bookingExpected = intent.status === "succeeded"
-      ? (hasSuccessfulRefund ? "cancelled" : "confirmed")
-      : null;
-    const paymentStatusMatch = p.payment_status === expectedDbStatus;
-    const bookingStatusMatch = bookingExpected === null
-      ? true // Nonterminal state transitions require contextual review, not a blind expected status.
-      : p.booking_status === bookingExpected;
-    const refundConsistency = !hasSuccessfulRefund ||
-      (p.stripe_refund_id !== null && p.stripe_refund_id !== undefined &&
-       Number(p.refund_amount_cents) === cents);
-    const issues = [];
-    for (const [name, pass] of Object.entries(identityChecks)) {
-      if (!pass) issues.push(`identity_${name}`);
-    }
-    if (!paymentStatusMatch) issues.push("payment_status_mismatch");
-    if (!bookingStatusMatch) issues.push("booking_status_mismatch");
-    if (!refundConsistency) issues.push("local_refund_record_inconsistent");
 
     return res.status(200).json({
-      status: issues.length ? "review_required" : "ok",
+      status: assessment.status,
       checked_at: new Date().toISOString(),
       payment_id: p.payment_id,
       booking_id: p.booking_id,
@@ -139,15 +92,7 @@ router.get("/payments/:id/recovery-status", authenticateAdmin, async (req, res) 
         capture_method: intent.capture_method,
         livemode: intent.livemode
       },
-      identity_checks: identityChecks,
-      identities_match: identityValid,
-      legacy_capture_method: intent.capture_method === "manual",
-      expected_local_payment_status: expectedDbStatus,
-      expected_booking_status: bookingExpected,
-      payment_status_match: paymentStatusMatch,
-      booking_status_match: bookingStatusMatch,
-      reconciliation_required: issues.length > 0,
-      issues,
+      ...assessment,
       read_only: true
     });
   } catch (error) {
