@@ -2,7 +2,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { quote } = require("../src/services/pricingService");
-const base = { state: "RI", postal_code: "02860", drive_miles: 0, addons: [] };
+const base = { state: "MA", postal_code: "02766", drive_miles: 0, addons: [] };
 const cases = [
   [{ sqft: 1500, full_baths: 2, half_baths: 1, service: "standard", frequency: "biweekly" }, 24058, 18284],
   [{ sqft: 1200, full_baths: 1, half_baths: 0, service: "standard", frequency: "once" }, 18600, 14136],
@@ -35,5 +35,15 @@ test("included addons are free for deep", () => {
   const r = quote({ ...base, sqft: 1200, full_baths: 1, half_baths: 0, service: "deep", frequency: "once", addons: [{ code: "oven" }] });
   assert.equal(r.amounts_cents.addons, 0);
 });
-test("reject excluded ZIP", () => assert.throws(() => quote({ ...base, postal_code: "02807", sqft: 1200, full_baths: 1, half_baths: 0, service: "standard", frequency: "once" }), /excluded/));
+const sample = { sqft: 1200, full_baths: 1, half_baths: 0, service: "standard", frequency: "once" };
+for (const zip of ["02067", "02072", "02356", "02375", "02766"]) {
+  test(`accept initial MA service ZIP ${zip}`, () => {
+    assert.equal(quote({ ...base, ...sample, postal_code: zip }).status, "estimate");
+  });
+}
+for (const [state, zip] of [["RI", "02860"], ["MA", "02860"], ["MA", "02108"], ["MA", "02334"], ["MA", "abcde"], ["NY", "02766"]]) {
+  test(`reject unsupported service area ${state} ${zip}`, () => {
+    assert.throws(() => quote({ ...base, ...sample, state, postal_code: zip }), /outside Scrubado/);
+  });
+}
 test("manual review beyond 4000 sq ft", () => assert.equal(quote({ ...base, sqft: 4500, full_baths: 1, half_baths: 0, service: "standard", frequency: "once" }).status, "manual_review_required"));

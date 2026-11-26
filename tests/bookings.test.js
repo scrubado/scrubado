@@ -12,14 +12,14 @@ const profileId = "6f90c01c-6fa5-4286-b2c0-ad23d145a945";
 const serviceId = "a0000000-0000-4000-8000-000000000000";
 const validBody = {
   quote_id: quoteId, scheduled_date: "2099-06-15", start_time: "10:00",
-  address_line1: "123 Test Street", city: "Pawtucket", state: "RI", postal_code: "02861"
+  address_line1: "123 Test Street", city: "Norton", state: "MA", postal_code: "02766"
 };
 
 function setup({ owner = userId, status = "active", expired = false } = {}) {
   const calls = [];
   const saved = { id: quoteId, customer_id: owner, service_id: serviceId,
     status, expires_at: expired ? "2000-01-01T00:00:00Z" : "2099-01-01T00:00:00Z",
-    postal_code: "02861", state: "RI", customer_total_cents: "24058",
+    postal_code: "02766", state: "MA", customer_total_cents: "24058",
     square_feet: 1500, full_baths: 2, half_baths: 1, service_code: "standard", addon_selections: [] };
   let used = false;
   const client = {
@@ -49,6 +49,7 @@ function setup({ owner = userId, status = "active", expired = false } = {}) {
       if (name === "../db") return { connect: async () => client };
       if (name === "../middleware/authenticate") return { authenticateCustomer() {} };
       if (name === "../services/durationService") return require(path.join(__dirname, "../src/services/durationService"));
+      if (name === "../services/serviceArea") return require(path.join(__dirname, "../src/services/serviceArea"));
       throw new Error(`Unexpected dependency: ${name}`);
     }, mod, mod.exports, { env: { ENABLE_DEV_BOOKINGS: "true", NODE_ENV: "development" } }, console
   );
@@ -98,7 +99,22 @@ test("rejects used and expired quotes", async () => {
 
 test("rejects invalid address before touching database", async () => {
   const { run, calls } = setup();
-  const result = await run({ ...validBody, postal_code: "02807" });
+  const result = await run({ ...validBody, postal_code: "02861" });
+  assert.equal(result.statusCode, 400);
+  assert.equal(calls.length, 0);
+});
+
+
+test("rejects wrong state even for an allowed Massachusetts ZIP", async () => {
+  const { run, calls } = setup();
+  const result = await run({ ...validBody, state: "RI" });
+  assert.equal(result.statusCode, 400);
+  assert.equal(calls.length, 0);
+});
+
+test("rejects an unsupported Massachusetts ZIP before database access", async () => {
+  const { run, calls } = setup();
+  const result = await run({ ...validBody, postal_code: "02108" });
   assert.equal(result.statusCode, 400);
   assert.equal(calls.length, 0);
 });

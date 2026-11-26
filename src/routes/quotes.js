@@ -65,7 +65,7 @@ router.post("/", authenticateCustomer, async (req, res) => {
           customer_total_cents, cleaner_total_cents
         ) VALUES (
           $13, $1, $2, $3,
-          'USD', 'RI', $4, $5, $6,
+          'USD', 'MA', $4, $5, $6,
           $7, $8, $9::jsonb,
           false, $10::jsonb,
           $11, $12
