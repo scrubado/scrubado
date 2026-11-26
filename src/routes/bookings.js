@@ -4,10 +4,10 @@ const express = require("express");
 const pool = require("../db");
 const { authenticateCustomer } = require("../middleware/authenticate");
 const { estimateJob, scheduledEnd, DurationError } = require("../services/durationService");
+const { isServedAddress } = require("../services/serviceArea");
 
 const router = express.Router();
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const zipPattern = /^\d{5}$/;
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 const timePattern = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
 
@@ -38,8 +38,7 @@ router.post("/", authenticateCustomer, async (req, res) => {
   if (!uuidPattern.test(quote_id || "") || !isDate(scheduled_date) ||
       !timePattern.test(start_time || "") || !textField(address_line1, 200) ||
       !optionalText(address_line2, 200) || !textField(city, 100) ||
-      state !== "RI" || typeof postal_code !== "string" ||
-      !zipPattern.test(postal_code) || postal_code === "02807" ||
+      !isServedAddress(state, postal_code) ||
       !optionalText(customer_notes, 2000)) {
     return res.status(400).json({ error: "Invalid booking details" });
   }
@@ -75,7 +74,7 @@ router.post("/", authenticateCustomer, async (req, res) => {
       return res.status(422).json({ error: "Booking address must match the quoted service area" });
     }
 
-    // PostgreSQL interprets scheduled local wall-clock values in Rhode Island time.
+    // PostgreSQL interprets scheduled local wall-clock values in Eastern time.
     const timeCheck = await client.query(`
       SELECT (($1::date + $2::time) AT TIME ZONE 'America/New_York') > NOW() AS future
     `, [scheduled_date, start_time]);
@@ -105,7 +104,7 @@ router.post("/", authenticateCustomer, async (req, res) => {
         scheduled_date, start_time, end_time, required_crew_size, address_line1, address_line2,
         city, state, postal_code, customer_notes, status
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'RI', $12, $13, 'requested'
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'MA', $12, $13, 'requested'
       )
       RETURNING id, quote_id, status, scheduled_date, start_time, end_time,
                 required_crew_size, quoted_price_cents, created_at

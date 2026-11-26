@@ -1,13 +1,17 @@
 {
-  "company": "JK Cleaning",
+  "company": "Scrubado",
   "version": "1.0",
   "currency": "USD",
   "money_unit": "cents in the database, dollars in this file",
   "service_area": {
-    "rule": "Address state must be RI. Exclude zip 02807 (New Shoreham / Block Island) in v1.",
-    "coverage_note": "All Rhode Island from 02861 Pawtucket through Coventry 02816 and Exeter 02822, and every other RI zip except 02807.",
-    "excluded_zips": [
-      "02807"
+    "rule": "State MA with a ZIP in approved_zips. Initial coverage only; verify full street address before confirming service.",
+    "coverage_note": "Norton, Stoughton, North/South Easton, and Sharon, Massachusetts. Surrounding towns require explicit approval.",
+    "approved_zips": [
+      "02067",
+      "02072",
+      "02356",
+      "02375",
+      "02766"
     ]
   },
   "settings": {
@@ -54,7 +58,7 @@
       "floor": 189
     },
     {
-      "name": "Typical RI home",
+      "name": "Typical home",
       "from_sqft": 1601,
       "to_sqft": 2000,
       "rate_per_sqft": 0.138,

@@ -1,5 +1,6 @@
 "use strict";
 const config = require("../config/pricing.json");
+const { isServedAddress } = require("./serviceArea");
 
 class PricingError extends Error {
   constructor(message, status = 400) { super(message); this.status = status; }
@@ -21,9 +22,8 @@ function quote(input) {
   integer(sqft, "sqft", 1, 6000);
   integer(full_baths, "full_baths", 0, 30);
   integer(half_baths, "half_baths", 0, 30);
-  if (typeof state !== "string" || state.toUpperCase() !== "RI") throw new PricingError("Only Rhode Island addresses are supported");
-  if (typeof postal_code !== "string" || !/^0(28|29)\d{2}$/.test(postal_code) || postal_code === "02807") {
-    throw new PricingError("Valid Rhode Island ZIP code required; 02807 is excluded");
+  if (!isServedAddress(state, postal_code)) {
+    throw new PricingError("Address is outside Scrubado Southern Massachusetts service area");
   }
   if (typeof drive_miles !== "number" || !Number.isFinite(drive_miles) || drive_miles < 0 || drive_miles > 1000) {
     throw new PricingError("drive_miles must be between 0 and 1000");
