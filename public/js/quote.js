@@ -21,7 +21,7 @@
    const total = document.createElement("div"); total.className = "quote-price"; total.textContent = money(data.amounts_cents.customer_total); result.append(total);
    const detail = document.createElement("div"); detail.className = "quote-lines";
    const amounts = data.amounts_cents;
-   detail.append(line("Service base", amounts.service_base),line("Bathrooms",amounts.bathrooms));
+   detail.append(line("Service base", amounts.service_base),line("Bathrooms — 1 full included",amounts.bathrooms));
    if (amounts.recurring_discount) detail.append(line("Recurring discount",-amounts.recurring_discount));
    if (amounts.addons) detail.append(line("Add-ons",amounts.addons));
    if (amounts.drive) detail.append(line("Travel charge",amounts.drive));
