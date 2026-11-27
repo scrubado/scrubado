@@ -32,6 +32,7 @@ window.ScrubadoAPI = (() => {
     },
     register: (details) => request("/auth/register", details, false),
     saveQuote: (details) => request("/quotes", details),
+    createBooking: (details) => request("/bookings", details),
     isSignedIn: () => !!accessToken,
     user: () => user,
     signOut: () => { accessToken = null; user = null; window.dispatchEvent(new Event("scrubado:session")); }

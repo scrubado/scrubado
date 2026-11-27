@@ -21,7 +21,7 @@
    const total = document.createElement("div"); total.className = "quote-price"; total.textContent = money(data.amounts_cents.customer_total); result.append(total);
    const detail = document.createElement("div"); detail.className = "quote-lines";
    const amounts = data.amounts_cents;
-   detail.append(line("Service base", amounts.service_base),line("Bathrooms — 1 full included",amounts.bathrooms));
+   detail.append(line("Service base", amounts.service_base),line("Bathrooms",amounts.bathrooms));
    if (amounts.recurring_discount) detail.append(line("Recurring discount",-amounts.recurring_discount));
    if (amounts.addons) detail.append(line("Add-ons",amounts.addons));
    if (amounts.drive) detail.append(line("Travel charge",amounts.drive));
@@ -29,9 +29,10 @@
    const id = document.createElement("p"); id.className = "note"; id.textContent = `Quote ID: ${data.quote_id}`; result.append(id);
    if (data.expires_at) { const expires = document.createElement("p"); expires.className = "note"; expires.textContent = `Expires: ${new Date(data.expires_at).toLocaleString()}`; result.append(expires); }
    const note = document.createElement("p"); note.className = "note"; note.textContent = data.disclaimer || "Saved preliminary estimate. Booking availability must be verified."; result.append(note);
+   window.dispatchEvent(new CustomEvent("scrubado:quote-saved", {detail:{quote_id:data.quote_id, postal_code:String(form.elements.postal_code.value).trim(), expires_at:data.expires_at, customer_total_cents:data.amounts_cents.customer_total}}));
  }
  form.addEventListener("submit", async (event) => {
-   event.preventDefault(); feedback.textContent = ""; feedback.className = "feedback"; result.hidden = true; result.replaceChildren();
+   event.preventDefault(); window.dispatchEvent(new Event("scrubado:quote-cleared")); feedback.textContent = ""; feedback.className = "feedback"; result.hidden = true; result.replaceChildren();
    const fd = new FormData(form), postal_code = String(fd.get("postal_code")||"").trim();
    if (!window.ScrubadoCoverage(postal_code)) { feedback.textContent = "Please enter an approved Southern Massachusetts ZIP code."; feedback.classList.add("error"); return; }
    const input = {state:"MA",postal_code,service:fd.get("service"),frequency:fd.get("frequency"),sqft:Number(fd.get("sqft")),full_baths:Number(fd.get("full_baths")),half_baths:Number(fd.get("half_baths")),drive_miles:0,addons:[]};

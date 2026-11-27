@@ -127,6 +127,42 @@
       </div>
     </section>
 
+
+    <section class="section" id="booking-request" aria-labelledby="booking-title" hidden>
+      <div class="container">
+        <div class="section-head"><span class="eyebrow">Next step — local development only</span><h2 id="booking-title">Request a cleaning appointment.</h2><p>Review your saved quote, enter the service address and a preferred start time. A request is not a confirmed appointment; cleaner availability has not yet been checked.</p></div>
+        <div class="booking-card quote-card">
+          <p id="booking-quote-summary" class="note"></p>
+          <form id="booking-form">
+            <div class="form-grid">
+              <div class="form-field wide"><label for="booking-address1">Street address</label><input id="booking-address1" name="address_line1" autocomplete="address-line1" maxlength="200" required></div>
+              <div class="form-field wide"><label for="booking-address2">Apartment, suite or unit (optional)</label><input id="booking-address2" name="address_line2" autocomplete="address-line2" maxlength="200"></div>
+              <div class="form-field"><label for="booking-city">City or town</label><input id="booking-city" name="city" autocomplete="address-level2" maxlength="100" required></div>
+              <div class="form-field"><label for="booking-state">State</label><input id="booking-state" value="MA" autocomplete="address-level1" readonly></div>
+              <div class="form-field"><label for="booking-zip">Service ZIP code</label><input id="booking-zip" name="postal_code" autocomplete="postal-code" readonly required></div>
+              <div class="form-field"><label for="booking-date">Preferred date</label><input id="booking-date" name="scheduled_date" type="date" required></div>
+              <div class="form-field"><label for="booking-time">Preferred start time (Eastern)</label><input id="booking-time" name="start_time" type="time" required></div>
+              <div class="form-field wide"><label for="booking-notes">Instructions (optional)</label><textarea id="booking-notes" name="customer_notes" maxlength="2000" rows="3" placeholder="Access notes or cleaning priorities; don't include payment information."></textarea></div>
+            </div>
+            <p class="note">The submitted time is a preference, not confirmed cleaner availability. This version does not yet offer named cleaner selection, payment or real-time scheduling.</p>
+            <button class="btn btn-outline" id="booking-preview" type="submit">Review booking request</button>
+            <p class="feedback" id="booking-feedback" role="status" aria-live="polite"></p>
+          </form>
+          <div class="quote-result" id="booking-review" hidden>
+            <h3>Review your development booking request</h3>
+            <div id="booking-review-details" class="review-details"></div>
+            <p class="note">No cleaner is assigned, no time slot is reserved, and no payment is taken. Submission consumes the saved quote if accepted.</p>
+            <div id="booking-dev-controls" hidden>
+              <label class="consent-label"><input type="checkbox" id="booking-dev-confirm"> I understand this creates a test booking record in Neon and marks my quote used.</label>
+              <button class="btn btn-primary" id="booking-submit" type="button" disabled>Submit LOCAL test request</button>
+            </div>
+            <p id="booking-prod-note" class="note">Live booking requests are not yet available. This is a preview only.</p>
+          </div>
+          <div class="quote-result" id="booking-success" hidden role="status" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
     <section class="section cleaner-area" id="cleaner">
       <div class="container split">
         <div>
@@ -182,5 +218,6 @@
   <script defer src="./js/api.js"></script>
   <script defer src="./js/app.js"></script>
   <script defer src="./js/quote.js"></script>
+  <script defer src="./js/booking.js"></script>
 </body>
 </html>

@@ -182,3 +182,14 @@
 .quote-card{max-width:720px;margin:auto}
 .why-note{border-left:3px solid var(--rose);padding-left:12px}
 @media(max-width:600px){.form-grid{grid-template-columns:1fr}.form-field.wide{grid-column:auto}}
+
+/* Phase 2: booking request preview */
+#booking-request[hidden],#booking-review[hidden],#booking-success[hidden],#booking-dev-controls[hidden],#booking-prod-note[hidden]{display:none}
+#booking-request textarea{background:#0c0d10;color:#fff;border:1px solid #756139;border-radius:10px;padding:12px;font:inherit;width:100%;resize:vertical}
+#booking-request input[readonly]{opacity:.8;background:#242428}
+#booking-request .review-details{display:grid;gap:12px;margin:16px 0}
+#booking-request .quote-line{overflow-wrap:anywhere}
+#booking-request .quote-line strong{max-width:65%;text-align:right;white-space:pre-wrap}
+#booking-request .consent-label{display:flex;align-items:flex-start;gap:10px;margin:20px 0;font-size:14px}
+#booking-request .consent-label input{width:18px;height:18px;accent-color:#D6B76E;flex:none}
+#booking-request button:disabled{opacity:.5;cursor:not-allowed}
