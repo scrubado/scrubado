@@ -1,3 +1,4 @@
+
 "use strict";
 // Self-contained route tests; no database credentials or packages needed.
 const test = require("node:test");
@@ -15,7 +16,8 @@ const validBody = {
   address_line1: "123 Test Street", city: "Norton", state: "MA", postal_code: "02766"
 };
 
-function setup({ owner = userId, status = "active", expired = false } = {}) {
+function setup({ owner = userId, status = "active", expired = false,
+  context = "dev", enableDevBookings = "true", nodeEnv = "development" } = {}) {
   const calls = [];
   const saved = { id: quoteId, customer_id: owner, service_id: serviceId,
     status, expires_at: expired ? "2000-01-01T00:00:00Z" : "2099-01-01T00:00:00Z",
@@ -51,7 +53,7 @@ function setup({ owner = userId, status = "active", expired = false } = {}) {
       if (name === "../services/durationService") return require(path.join(__dirname, "../src/services/durationService"));
       if (name === "../services/serviceArea") return require(path.join(__dirname, "../src/services/serviceArea"));
       throw new Error(`Unexpected dependency: ${name}`);
-    }, mod, mod.exports, { env: { ENABLE_DEV_BOOKINGS: "true", NODE_ENV: "development" } }, console
+    }, mod, mod.exports, { env: { ENABLE_DEV_BOOKINGS: enableDevBookings, CONTEXT: context, NODE_ENV: nodeEnv } }, console
   );
   async function run(body = validBody) {
     const res = { statusCode: 200, status(code) { this.statusCode = code; return this; },
@@ -117,4 +119,29 @@ test("rejects an unsupported Massachusetts ZIP before database access", async ()
   const result = await run({ ...validBody, postal_code: "02108" });
   assert.equal(result.statusCode, 400);
   assert.equal(calls.length, 0);
+});
+
+test("blocks production and preview deployment contexts before database access", async () => {
+  for (const context of ["production", "deploy-preview", "branch-deploy", null, ""]) {
+    const { run, calls } = setup({ context });
+    const result = await run();
+    assert.equal(result.statusCode, 503, `Expected blocked context: ${context}`);
+    assert.equal(calls.length, 0);
+  }
+});
+
+test("blocks development context unless feature flag is explicitly enabled", async () => {
+  for (const enableDevBookings of [null, "false", "TRUE", "1", ""]) {
+    const { run, calls } = setup({ enableDevBookings });
+    const result = await run();
+    assert.equal(result.statusCode, 503);
+    assert.equal(calls.length, 0);
+  }
+});
+
+test("allows explicitly enabled Netlify Dev context even with NODE_ENV production", async () => {
+  const { run, calls } = setup({ nodeEnv: "production" });
+  const result = await run();
+  assert.equal(result.statusCode, 201);
+  assert.ok(calls.some(c => c.sql === "COMMIT"));
 });
